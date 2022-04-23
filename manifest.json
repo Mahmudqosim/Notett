@@ -1,7 +1,7 @@
 {
     "name": "Notett",
     "short_name": "Notett",
-    "start_url": ".",
+    "start_url": "index.html",
     "background_color": "#10a7d5",
     "theme_color": "#2dc3f0",
     "display": "standalone",

@@ -4,7 +4,7 @@ let words =
 function getRandomId() {
   let randomId = []
   for (let i = 0; i <= 10; i++) {
-    let randomNum = Math.floor(Math.random() * 267)
+    let randomNum = Math.floor(Math.random() * words.length)
     randomId.push(randomNum)
     randomId.push(words[randomNum])
   }

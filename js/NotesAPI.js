@@ -1,6 +1,10 @@
 import { getRandomId } from "./RandomID.js"
 
 export default class NotesAPI {
+  /**
+   *
+   * @returns {object[]} Returns all notes in LocalStorage
+   */
   static getAllNotes() {
     const notes = JSON.parse(
       localStorage.getItem("notett-notes") ||
@@ -9,7 +13,7 @@ export default class NotesAPI {
             id: getRandomId(),
             title: "New Note",
             body: "Start writing...",
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           },
         ])
     )
@@ -19,6 +23,11 @@ export default class NotesAPI {
     })
   }
 
+  /**
+   *
+   * @param {object} note
+   * @description  Add a note to LocalStorage or update an existing one
+   */
   static saveNote(note) {
     const notes = NotesAPI.getAllNotes()
     const existingNote = notes.find((n) => n.id == note.id)
@@ -36,6 +45,11 @@ export default class NotesAPI {
     localStorage.setItem("notett-notes", JSON.stringify(notes))
   }
 
+  /**
+   *
+   * @param {string} id
+   * @description Deletes a note in LocalStorage
+   */
   static deleteNote(id) {
     const notes = NotesAPI.getAllNotes()
 
@@ -44,7 +58,29 @@ export default class NotesAPI {
     localStorage.setItem("notett-notes", JSON.stringify(editedNotes))
   }
 
+  /**
+   * @description Deletes all notes in LocalStorage
+   */
   static deleteAllNotes() {
-    localStorage.setItem("notett-notes", JSON.stringify("[]"))
+    localStorage.setItem(
+      "notett-notes",
+      JSON.stringify([
+        {
+          id: getRandomId(),
+          title: "New Note",
+          body: "Start writing...",
+          updated_at: new Date().toISOString(),
+        },
+      ])
+    )
+  }
+
+  /**
+   * 
+   * @param {object[]} backupData 
+   * @description Restore Backup File
+   */
+  static restoreBackup(backupData) {
+    localStorage.setItem('notett-notes', JSON.stringify(backupData))
   }
 }

@@ -1,64 +1,90 @@
 import NotesView from "./NotesView.js"
 import NotesAPI from "./NotesAPI.js"
-
 export default class App {
-    constructor(root) {
-        this.notes = []
-        this.activeNote = null
-        this.view = new NotesView(root, this._handlers())
+  constructor(root) {
+    this.notes = []
+    this.activeNote = null
+    this.view = new NotesView(root, this._handlers())
+
+    this._refreshNotes()
+  }
+
+  _handlers() {
+    return {
+      onNoteSelect: (noteId) => {
+        const selectedNote = this.notes.find((note) => note.id == noteId)
+        this._setActiveNote(selectedNote)
+      },
+      onNoteAdd: () => {
+        const newNote = {
+          title: "New Note",
+          body: "Start writing...",
+        }
+
+        NotesAPI.saveNote(newNote)
+        this._refreshNotes()
+      },
+      onNoteEdit: (title, body) => {
+        NotesAPI.saveNote({
+          id: this.activeNote.id,
+          title,
+          body,
+        })
 
         this._refreshNotes()
-    }
+      },
+      onNoteDelete: (noteId) => {
+        NotesAPI.deleteNote(noteId)
+        this._refreshNotes()
+      },
+      onNotesDeleteAll: () => {
+        NotesAPI.deleteAllNotes()
 
-    _handlers() {
-        return {
-            onNoteSelect: noteId => {
-                const selectedNote = this.notes.find(note => note.id == noteId)
-                this._setActiveNote(selectedNote)
-            },
-            onNoteAdd: () => {
-                const newNote = {
-                    title: 'New Note',
-                    body: 'Start writing...'
-                }
+        this._refreshNotes()
+      },
+      onNotesRestore: (file, cb) => {
+        let fr = new FileReader()
 
-                NotesAPI.saveNote(newNote)
-                this._refreshNotes()
-            },
-            onNoteEdit: (title, body) => {
-                NotesAPI.saveNote({
-                    id: this.activeNote.id,
-                    title,
-                    body
-                })
+        fr.onload = (e) => {
+          NotesAPI.restoreBackup(JSON.parse(e.target.result))
 
-                this._refreshNotes()
-            },
-            onNoteDelete: (noteId) => {
-                NotesAPI.deleteNote(noteId)
-                this._refreshNotes()
-            }
+          this._refreshNotes()
+          cb()
         }
-    }
+        fr.readAsText(file)
+      },
+      onNotesBackup: () => {
+        const a = document.createElement("a")
+        const data = JSON.stringify(NotesAPI.getAllNotes())
+        const filename = `NOTETT_BACKUP(${new Date().toISOString()}).json`
 
-    _refreshNotes() {
-        const notes = NotesAPI.getAllNotes()
-        
-        this._setNotes(notes)
+        const file = new Blob([data], { type: "application/json" })
 
-        if(notes.length > 0) {
-            this._setActiveNote(notes[0])
-        }
+        a.download = filename
+        a.href = URL.createObjectURL(file)
+        a.click()
+      },
     }
+  }
 
-    _setNotes(notes) {
-        this.notes = notes
-        this.view.updateNotesList(notes)
-        this.view.updateNotePreviewVisibility(notes.length > 0)
-    }
+  _refreshNotes() {
+    const notes = NotesAPI.getAllNotes()
 
-    _setActiveNote(note) {
-        this.activeNote = note
-        this.view.updateActiveNote(note)
+    this._setNotes(notes)
+
+    if (notes.length > 0) {
+      this._setActiveNote(notes[0])
     }
+  }
+
+  _setNotes(notes) {
+    this.notes = notes
+    this.view.updateNotesList(notes)
+    this.view.updateNotePreviewVisibility(notes.length > 0)
+  }
+
+  _setActiveNote(note) {
+    this.activeNote = note
+    this.view.updateActiveNote(note)
+  }
 }

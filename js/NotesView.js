@@ -1,7 +1,15 @@
 export default class NotesView {
   constructor(
     root,
-    { onNoteSelect, onNoteAdd, onNoteEdit, onNoteDelete, onNotesDeleteAll } = {}
+    {
+      onNoteSelect,
+      onNoteAdd,
+      onNoteEdit,
+      onNoteDelete,
+      onNotesDeleteAll,
+      onNotesRestore,
+      onNotesBackup,
+    } = {}
   ) {
     this.root = root
     this.onNoteSelect = onNoteSelect
@@ -22,19 +30,17 @@ export default class NotesView {
           </div>
         </div>
         <div class="modal__container" role="alert" aria-hidden="true">
-          <div class="modal__content">
+        
+        <div class="modal__content">
             <span class="close-modal">&times;</span>
-            <div class="modal__footer">
-              Made by Mahmudqosim
+            <div class="modal__buttons">
+              <input style="display: none;" type="file" id="fileHandler" />
+              <button class="backup-data">Backup Data</button>
+              <label class="restore-data" for="fileHandler">Restore Data</label>
+              <button class="red delete-all">Delete Notes</button>
             </div>
             <div class="social">
-              <a href="https://github.com/mahmudqosim">
-                <img src="./icons/github.svg" />
-              </a>
-              <a href="https://github.com/mahmudqosim">
-                <img src="./icons/github.svg" />
-              </a>
-              <a href="https://github.com/mahmudqosim">
+              <a href="https://github.com/mahmudqosim" target="_blank">
                 <img src="./icons/github.svg" />
               </a>
             </div>
@@ -50,19 +56,22 @@ export default class NotesView {
           <img class="menu__btn" src="./icons/menu.svg" title="Open menu" />
         </div>
         <div class="notes__preview">
-            <button title="Save note" class="save-btn"><img src="./icons/save.svg" /></button>
+            <button title="Save note (Doesn't really do anything.)" class="save-btn"><img src="./icons/save.svg" /></button>
             <input type="text" class="notes__title" placeholder="New Note...">
             <textarea class="notes__body">Start writing...</textarea>
         </div>
         <div class="info">
-            <span>?<span>
+            <span>
+              <img src="./icons/cog.svg" />
+            <span>
         </div>
         `
+
+    this.toastContainer = this.root.querySelector(".toast__container")
 
     const addNoteBtn = this.root.querySelector(".notes__add")
     const titleInputEl = this.root.querySelector(".notes__title")
     const bodyInputEl = this.root.querySelector(".notes__body")
-    this.toastContainer = this.root.querySelector(".toast__container")
     const closeToastBtn = this.root.querySelector(".close-toast")
     const toastYes = this.root.querySelector(".toast__yes")
     const toastNo = this.root.querySelector(".toast__no")
@@ -70,17 +79,20 @@ export default class NotesView {
     const modalContainer = this.root.querySelector(".modal__container")
     const modalContent = this.root.querySelector(".modal__content")
     const closeModalBtn = this.root.querySelector(".close-modal")
-    const notesSidebar = this.root.querySelector('.notes__sidebar')
-    const menuBtn = this.root.querySelector('.menu__btn')
-    const closeSidebarBtn = this.root.querySelector('.close-sidebar')
-    const saveBtn = this.root.querySelector('.save-btn')
+    const notesSidebar = this.root.querySelector(".notes__sidebar")
+    const menuBtn = this.root.querySelector(".menu__btn")
+    const closeSidebarBtn = this.root.querySelector(".close-sidebar")
+    const saveBtn = this.root.querySelector(".save-btn")
+    const deleteAllBtn = this.root.querySelector(".delete-all")
+    const fileHandler = this.root.querySelector("#fileHandler")
+    const downloadDataBtn = this.root.querySelector(".backup-data")
 
-    menuBtn.addEventListener('click', () => {
-      notesSidebar.classList.add('active')
+    menuBtn.addEventListener("click", () => {
+      notesSidebar.classList.add("active")
     })
 
-    closeSidebarBtn.addEventListener('click', () => {
-      notesSidebar.classList.remove('active')
+    closeSidebarBtn.addEventListener("click", () => {
+      notesSidebar.classList.remove("active")
     })
 
     infoBtn.addEventListener("click", () => {
@@ -124,11 +136,29 @@ export default class NotesView {
       })
     })
 
-    saveBtn.addEventListener('click', () => {
+    saveBtn.addEventListener("click", () => {
       const updatedTitle = titleInputEl.value.trim()
       const updatedBody = bodyInputEl.value.trim()
 
       this.onNoteEdit(updatedTitle, updatedBody)
+    })
+
+    deleteAllBtn.addEventListener("click", () => {
+      this.onNotesDeleteAll()
+
+      modalContainer.classList.remove("active")
+      modalContent.classList.remove("active")
+    })
+
+    fileHandler.addEventListener("change", () => {
+      onNotesRestore(fileHandler.files[0], () => {
+        modalContainer.classList.remove("active")
+        modalContent.classList.remove("active")
+      })
+    })
+
+    downloadDataBtn.addEventListener("click", () => {
+      onNotesBackup()
     })
 
     this.updateNotePreviewVisibility(false)
@@ -203,6 +233,8 @@ export default class NotesView {
   }
 
   updateNotePreviewVisibility(visible) {
-    this.root.querySelector('.notes__preview').style.visibility = visible ? 'visible' : 'hidden'
+    this.root.querySelector(".notes__preview").style.visibility = visible
+      ? "visible"
+      : "hidden"
   }
 }

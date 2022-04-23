@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap'); */
 
 :root {
   --main-color: hsl(194, 75%, 50%);
@@ -27,16 +27,25 @@
   }
 }
 
-html,
-body {
+* {
+  font-family: var(--body-font);
+}
+
+html, body {
   height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 input,
 button {
-  outline: none;
   border: none;
 }
+
 
 button {
   cursor: pointer;
@@ -44,7 +53,6 @@ button {
 
 .notes {
   display: flex;
-  position: relative;
   height: 100%;
 }
 
@@ -54,24 +62,20 @@ button {
 
 .notes__sidebar {
   position: fixed;
-  visibility: hidden;
   top: 0;
-  left: 0;
+  left: -100%;
   height: 100%;
-  width: 0;
+  width: 200px;
   background: #fff;
-  overflow-y: hidden;
-  padding: .875rem;
-  padding-top: 50px;
+  padding: 60px 16px;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1), 5px 0 20px rgba(85, 75, 75, 0.1);
   transition: 0.5s;
+  overflow-y: auto;
   z-index: 1;
 }
 
 .notes__sidebar.active {
-  width: 250px;
-  visibility: visible;
-  overflow-y: auto;
+  left: 0;
 }
 
 .close-sidebar {
@@ -111,6 +115,10 @@ button {
 .notes__add:active {
   box-shadow: none;
   transform: translateY(3px);
+}
+
+.notes__list .notes__list-item:last-child {
+  margin-bottom: 100px;
 }
 
 .notes__list-item {
@@ -275,6 +283,7 @@ button {
   background: rgba(0, 0, 0, 0.3);
   z-index: 500;
   visibility: hidden;
+  transition: 0.3s ease-in-out;
 }
 
 .modal__container.active {
@@ -284,51 +293,63 @@ button {
 .modal__content {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-direction: column;
   background: #fff;
+  row-gap: 1rem;
   margin: 20px;
-  width: 300px;
-  height: 150px;
-  padding: 0px 20px 10px 20px;
-  border-bottom: 5px solid #fd382e;
+  width: 500px;
+  padding: 50px 20px 10px 20px;
   border-radius: 5px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  max-width: 600px;
   transform: translateY(-500px);
   z-index: 1000;
-  visibility: hidden;
-  transition: transform 0.5s;
+  transition: 0.3s ease-in-out;
 }
 
 .modal__content.active {
-  visibility: visible;
   transform: translateY(0px);
 }
 
 .close-modal {
   position: absolute;
   top: 10px;
-  right: 10px;
-  font-size: var(--larger-font-size);
+  right: 20px;
+  font-size: var(--largest-font-size);
   cursor: pointer;
 }
 
-.modal__footer {
+.modal__buttons {
   display: flex;
-  align-self: center;
-  align-items: center;
-  color: #888;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.modal__buttons button, .modal__buttons label {
+  cursor: pointer;
+  text-align: center;
+  font-size: var(--smaller-font-size);
+  padding: .5rem 1.5rem;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  background: #202020;
+  flex: 1;
+  font-weight: 500;
+  border-radius: 5px;
+}
+
+.modal__buttons button.red {
+  background: #fd382e;
 }
 
 .social {
-  padding-top: 20px;
   align-self: center;
 }
 
-.social a {
-  list-style: none;
+.social img {
+  height: 50px;
 }
 
 .info {
@@ -340,14 +361,18 @@ button {
   align-items: center;
   bottom: 20px;
   right: 20px;
-  font-weight: 700;
   font-size: var(--large-font-size);
-  color: #444;
   background: #eee;
   border-radius: 50%;
   border: 1px solid #ddd;
   cursor: pointer;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.info img {
+  height: 20px;
+  width: 20px;
+  opacity: .7;
 }
 
 .save-btn {

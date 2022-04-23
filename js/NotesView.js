@@ -161,6 +161,13 @@ export default class NotesView {
       onNotesBackup()
     })
 
+    modalContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("modal__container")) {
+        modalContainer.classList.remove("active")
+        modalContent.classList.remove("active")
+      }
+    })
+
     this.updateNotePreviewVisibility(false)
   }
 

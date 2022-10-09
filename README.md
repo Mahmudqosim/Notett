@@ -1,6 +1,6 @@
 # Notett
 A PWA Notes App.
 
-Made with ## JAVASCRIPT
+Made with ** JAVASCRIPT **
 
 https://notett.netlify.app/
